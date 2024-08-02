@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: Movie Ticket Booking API
+  description: API for booking movie tickets.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /movies:
+    get:
+      summary: Get all movies
+      responses:
+        '200':
+          description: A list of movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /movies/{movie}/theaters:
+    get:
+      summary: Get all theaters for a movie
+      parameters:
+        - in: path
+          name: movie
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of theaters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /movies/{movie}/theaters/{theater}/seats:
+    get:
+      summary: Get available seats for a movie in a theater
+      parameters:
+        - in: path
+          name: movie
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: theater
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of available seats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+    post:
+      summary: Book seats for a movie in a theater
+      parameters:
+        - in: path
+          name: movie
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: theater
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+      responses:
+        '200':
+          description: Booking successful
+        '400':
+          description: Booking failed

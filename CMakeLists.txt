@@ -34,6 +34,8 @@ add_custom_target(copy-swagger-ui ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/external/swagger-ui/dist ${CMAKE_BINARY_DIR}/swagger-ui
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_SOURCE_DIR}/external/swagger-ui/spec/swagger.yaml ${CMAKE_BINARY_DIR}/swagger-ui/swagger.yaml
+    ${CMAKE_SOURCE_DIR}/swagger.yaml ${CMAKE_BINARY_DIR}/swagger-ui/swagger.yaml
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_SOURCE_DIR}/index.html ${CMAKE_BINARY_DIR}/swagger-ui/index.html
 )
 add_dependencies(MovieTicketBooking copy-swagger-ui)
