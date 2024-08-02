@@ -2,9 +2,18 @@
 #include "crow_all.h"
 #include "BookingSystem.h"
 #include <mutex>
+#include <fstream>
+#include <sstream>
 
-BookingSystem bookingSystem; // Rename to avoid conflict
+BookingSystem bookingSystem;
 std::mutex mtx;
+
+std::string readFile(const std::string& filePath) {
+    std::ifstream file(filePath);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
 
 int main() {
     crow::SimpleApp app;
@@ -56,7 +65,7 @@ int main() {
             std::lock_guard<std::mutex> lock(mtx);
             auto body = crow::json::load(req.body);
             if (!body) {
-                res.code = 400; // BAD_REQUEST
+                res.code = 400;
                 res.write("Invalid JSON");
                 res.end();
                 return;
@@ -69,12 +78,29 @@ int main() {
 
             bool success = bookingSystem.bookSeats(movie, theater, seatsToBook);
             if (success) {
-                res.code = 200; // OK
+                res.code = 200;
                 res.write("Booking successful");
             } else {
-                res.code = 400; // BAD_REQUEST
+                res.code = 400;
                 res.write("Booking failed");
             }
+            res.end();
+        });
+
+    // Serve Swagger-UI
+    CROW_ROUTE(app, "/swagger/<path>")
+        .methods(crow::HTTPMethod::GET)([](const crow::request& req, crow::response& res, std::string path) {
+            auto filePath = "swagger-ui/" + path;
+            std::string fileContent = readFile(filePath);
+            res.write(fileContent);
+            res.end();
+        });
+
+    // Serve Swagger specification
+    CROW_ROUTE(app, "/swagger.yaml")
+        .methods(crow::HTTPMethod::GET)([](const crow::request& req, crow::response& res) {
+            std::string fileContent = readFile("swagger-ui/swagger.yaml");
+            res.write(fileContent);
             res.end();
         });
 
