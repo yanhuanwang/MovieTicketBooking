@@ -30,22 +30,22 @@ This project implements a backend service in C++ for booking movie tickets. The 
 
 ## Project Structure
 
-MovieTicketBooking/
-├── CMakeLists.txt
-├── README.md
-├── include/
-│   ├── BookingSystem.h
-│   ├── Movie.h
-│   ├── Seat.h
-│   └── Theater.h
-├── src/
-│   ├── BookingSystem.cpp
-│   ├── Movie.cpp
-│   ├── Seat.cpp
-│   └── Theater.cpp
-└── tests/
-    ├── CMakeLists.txt
-    └── test_booking_system.cpp
+MovieTicketBooking/\
+├── CMakeLists.txt\
+├── README.md\
+├── include/\
+│   ├── BookingSystem.h\
+│   ├── Movie.h\
+│   ├── Seat.h\
+│   └── Theater.h\
+├── src/\
+│   ├── BookingSystem.cpp\
+│   ├── Movie.cpp\
+│   ├── Seat.cpp\
+│   └── Theater.cpp\
+└── tests/\
+    ├── CMakeLists.txt\
+    └── test_booking_system.cpp\
 
 
 
@@ -67,9 +67,15 @@ brew install googletest
 
 Building the Project
 1. Clone the repository:
-2. Create a build directory and navigate into it:
-3. Run CMake to configure the project and generate build files:
-4. Build the project:
+2. Run CMake to configure the project and generate build files:
+3. Build the project:
+```bash
+git clone https://github.com/yanhuanwang/MovieTicketBooking.git
+cd build
+cmake ..
+make
+./tests/runUnitTests
+```
 
 Running the Application
 ```bash

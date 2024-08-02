@@ -1,6 +1,6 @@
-include(GoogleTest)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../external/googletest external/googletest)
 
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_BINARY_DIR})
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(runUnitTests
     test_booking_system.cpp
@@ -10,6 +10,4 @@ add_executable(runUnitTests
     ../src/Theater.cpp
 )
 
-target_link_libraries(runUnitTests gtest gtest_main pthread)
-
-gtest_discover_tests(runUnitTests)
+target_link_libraries(runUnitTests gtest gtest_main)

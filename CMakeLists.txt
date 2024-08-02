@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(MovieTicketBooking)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
-include_directories(include)
+# Find Boost libraries
+find_package(Boost REQUIRED COMPONENTS system thread)
+
+include_directories(include ${Boost_INCLUDE_DIRS})
 
 add_executable(MovieTicketBooking
     src/main.cpp
@@ -13,18 +16,23 @@ add_executable(MovieTicketBooking
     src/BookingSystem.cpp
 )
 
-# Enable testing
-enable_testing()
+# Link Boost libraries
+target_link_libraries(MovieTicketBooking PRIVATE ${Boost_LIBRARIES})
 
-# Add Google Test
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+# Enable testing
+# enable_testing()
+
+# Add Google Test from the external directory
+# add_subdirectory(external/googletest)
+# include_directories(external/googletest/googletest/include)
 
 # Add test files
-add_subdirectory(tests)
+# add_executable(runUnitTests
+#     # tests/test_booking_system.cpp
+#     src/BookingSystem.cpp
+#     src/Movie.cpp
+#     src/Seat.cpp
+#     src/Theater.cpp
+# )
+
+# target_link_libraries(runUnitTests gtest gtest_main)

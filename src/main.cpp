@@ -1,53 +1,82 @@
-#include <iostream>
+#define CROW_MAIN
+#include "crow_all.h"
 #include "BookingSystem.h"
+#include <mutex>
+
+BookingSystem bookingSystem; // Rename to avoid conflict
+std::mutex mtx;
 
 int main() {
-    BookingSystem system;
+    crow::SimpleApp app;
 
-    // Add movies
-    system.addMovie(Movie("Movie1"));
-    system.addMovie(Movie("Movie2"));
+    bookingSystem.addMovie(Movie("Movie1"));
+    bookingSystem.addMovie(Movie("Movie2"));
 
-    // Add theaters
-    system.addTheater(Theater("Theater1"), "Movie1");
-    system.addTheater(Theater("Theater2"), "Movie1");
-    system.addTheater(Theater("Theater3"), "Movie2");
+    bookingSystem.addTheater(Theater("Theater1"), "Movie1");
+    bookingSystem.addTheater(Theater("Theater2"), "Movie1");
+    bookingSystem.addTheater(Theater("Theater3"), "Movie2");
 
-    // Display movies
-    auto movies = system.getMovies();
-    std::cout << "Movies currently playing:" << std::endl;
-    for (const auto& movie : movies) {
-        std::cout << "- " << movie << std::endl;
-    }
+    CROW_ROUTE(app, "/movies")
+        .methods(crow::HTTPMethod::GET)([]() {
+            std::lock_guard<std::mutex> lock(mtx);
+            crow::json::wvalue x;
+            auto movies = bookingSystem.getMovies();
+            for (size_t i = 0; i < movies.size(); ++i) {
+                x[i] = movies[i];
+            }
+            return x;
+        });
 
-    // Display theaters for a movie
-    auto theaters = system.getTheaters("Movie1");
-    std::cout << "\nTheaters showing Movie1:" << std::endl;
-    for (const auto& theater : theaters) {
-        std::cout << "- " << theater << std::endl;
-    }
+    CROW_ROUTE(app, "/movies/<string>/theaters")
+        .methods(crow::HTTPMethod::GET)([](const crow::request& req, crow::response& res, std::string movie) {
+            std::lock_guard<std::mutex> lock(mtx);
+            crow::json::wvalue x;
+            auto theaters = bookingSystem.getTheaters(movie);
+            for (size_t i = 0; i < theaters.size(); ++i) {
+                x[i] = theaters[i];
+            }
+            res.write(x.dump());
+            res.end();
+        });
 
-    // Display available seats in a theater for a movie
-    auto availableSeats = system.getAvailableSeats("Movie1", "Theater1");
-    std::cout << "\nAvailable seats in Theater1 for Movie1:" << std::endl;
-    for (const auto& seat : availableSeats) {
-        std::cout << "Seat " << seat << std::endl;
-    }
+    CROW_ROUTE(app, "/movies/<string>/theaters/<string>/seats")
+        .methods(crow::HTTPMethod::GET)([](const crow::request& req, crow::response& res, std::string movie, std::string theater) {
+            std::lock_guard<std::mutex> lock(mtx);
+            crow::json::wvalue x;
+            auto availableSeats = bookingSystem.getAvailableSeats(movie, theater);
+            for (size_t i = 0; i < availableSeats.size(); ++i) {
+                x[i] = availableSeats[i];
+            }
+            res.write(x.dump());
+            res.end();
+        });
 
-    // Book seats
-    std::vector<int> seatsToBook = {1, 2, 3};
-    if (system.bookSeats("Movie1", "Theater1", seatsToBook)) {
-        std::cout << "\nSuccessfully booked seats 1, 2, 3 in Theater1 for Movie1." << std::endl;
-    } else {
-        std::cout << "\nFailed to book seats 1, 2, 3 in Theater1 for Movie1." << std::endl;
-    }
+    CROW_ROUTE(app, "/movies/<string>/theaters/<string>/seats")
+        .methods(crow::HTTPMethod::POST)([](const crow::request& req, crow::response& res, std::string movie, std::string theater) {
+            std::lock_guard<std::mutex> lock(mtx);
+            auto body = crow::json::load(req.body);
+            if (!body) {
+                res.code = 400; // BAD_REQUEST
+                res.write("Invalid JSON");
+                res.end();
+                return;
+            }
 
-    // Display available seats after booking
-    availableSeats = system.getAvailableSeats("Movie1", "Theater1");
-    std::cout << "\nAvailable seats in Theater1 for Movie1 after booking:" << std::endl;
-    for (const auto& seat : availableSeats) {
-        std::cout << "Seat " << seat << std::endl;
-    }
+            std::vector<int> seatsToBook;
+            for (const auto& seat : body) {
+                seatsToBook.push_back(seat.i());
+            }
 
-    return 0;
+            bool success = bookingSystem.bookSeats(movie, theater, seatsToBook);
+            if (success) {
+                res.code = 200; // OK
+                res.write("Booking successful");
+            } else {
+                res.code = 400; // BAD_REQUEST
+                res.write("Booking failed");
+            }
+            res.end();
+        });
+
+    app.port(8080).multithreaded().run();
 }
