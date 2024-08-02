@@ -1,4 +1,4 @@
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../external/googletest external/googletest)
+include(GoogleTest)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
@@ -11,3 +11,4 @@ add_executable(runUnitTests
 )
 
 target_link_libraries(runUnitTests gtest gtest_main)
+gtest_discover_tests(runUnitTests)

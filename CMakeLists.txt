@@ -20,19 +20,11 @@ add_executable(MovieTicketBooking
 target_link_libraries(MovieTicketBooking PRIVATE ${Boost_LIBRARIES})
 
 # Enable testing
-# enable_testing()
+enable_testing()
 
 # Add Google Test from the external directory
-# add_subdirectory(external/googletest)
-# include_directories(external/googletest/googletest/include)
+add_subdirectory(external/googletest)
+include_directories(external/googletest/googletest/include)
 
-# Add test files
-# add_executable(runUnitTests
-#     # tests/test_booking_system.cpp
-#     src/BookingSystem.cpp
-#     src/Movie.cpp
-#     src/Seat.cpp
-#     src/Theater.cpp
-# )
-
-# target_link_libraries(runUnitTests gtest gtest_main)
+# Add test directory
+add_subdirectory(tests)
