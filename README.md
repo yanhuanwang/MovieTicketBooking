@@ -57,28 +57,17 @@ MovieTicketBooking/\
 - CMake (version 3.10 or later)
 - Google Test (gtest)
 
-### Installing Google Test
-
-On macOS, you can install Google Test using Homebrew:
-
-```bash
-brew install googletest
-```
-
 Building the Project
 1. Clone the repository:
 2. Run CMake to configure the project and generate build files:
 3. Build the project:
 ```bash
-git clone https://github.com/yanhuanwang/MovieTicketBooking.git
-cd build
-cmake ..
-make
-./tests/runUnitTests
+./build.sh
 ```
 
 Running the Application
 ```bash
+cd build
 ./MovieTicketBooking
 ```
 
@@ -87,6 +76,7 @@ Running the Tests
 To run the unit tests, execute the following command in the build directory:
 
 ```bash
+cd build
 ./tests/runUnitTests
 ```
 
