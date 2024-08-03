@@ -80,3 +80,22 @@ cd build
 ./tests/runUnitTests
 ```
 
+
+Build the Docker image:
+```bash
+docker build -t movie-ticket-booking .
+```
+
+Run the Docker container:
+```bash
+docker run -p 8080:8080 movie-ticket-booking
+```
+
+Access UI with browser:
+http://localhost:8080/swagger/index.html
+
+
+Run with docker images from docker hub:
+```bash
+docker run -p 8080:8080 yanhuanwang/movie-ticket-booking:latest
+```
