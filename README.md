@@ -23,10 +23,7 @@ This project implements a backend service in C++ for booking movie tickets. The 
 - Unit tests for all functionalities
 
 ## Optional Features
-
-- Conan package management
 - Docker support
-- Documentation generation using Doxygen
 
 ## Project Structure
 
@@ -62,6 +59,8 @@ Building the Project
 2. Run CMake to configure the project and generate build files:
 3. Build the project:
 ```bash
+git clone https://github.com/yanhuanwang/MovieTicketBooking.git
+cd MovieTicketBooking
 ./build.sh
 ```
 
@@ -78,6 +77,7 @@ To run the unit tests, execute the following command in the build directory:
 ```bash
 cd build
 ./tests/runUnitTests
+ctest
 ```
 
 
